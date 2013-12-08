@@ -6,7 +6,7 @@
 * [Examples](#examples)
 * [Primitives](#primitives)
 * [Building](#building)
-* [Authors](#authors)
+* [Author](#author)
 * [Feedback](#feedback-bugs-feature-requests)
 * [Credits](#credits)
 * [Terms of use](#terms-of-use)
