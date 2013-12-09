@@ -29,7 +29,7 @@ This package contains the NetLogo **pathdir extension**, which provides NetLogo 
 
 ## Installation
 
-First, [download the latest version of the extension](https://github.com/colinsheppard/Time-Extension/releases). Note that the latest version of this extension was compiled against NetLogo 5.0.4. If you are using a different version of NetLogo you might consider building your own jar file ([see building section below](#building)).
+First, [download the latest version of the extension](https://github.com/cstaelin/Pathdir-Extension). Note that the latest version of this extension was compiled against NetLogo 5.0.4. If you are using a different version of NetLogo you might consider building your own jar file ([see building section below](#building)).
 
 Unzip the archive and rename the directory to "pathdir".  Move the renamed directory to the "extensions" directory inside your NetLogo application folder. The NetLogo application folder will normally be in the Applications folder on the Mac, or under C:\Program Files (x86) on Windows.  Or you can place the pathdir directory under the same directory holding the NetLogo model in which you want to use this extension.
 
@@ -162,7 +162,7 @@ Returns the modification date of the file given by the string. The date is retur
 
 ## Building
 
-The Makefile uses the NETLOGO environment variable to find the NetLogo installation. If compilation succeeds, `pathdir.jar` will be created.  See [Installation](#installation) for instructions on where to put your compiled extension.
+The Makefile uses the NETLOGO environment variable to find the NetLogo installation. However, if NETLOGO has not been defined, the Makefile assumes that it is being run from the extensions/pathdir directory under the directory in which NetLogo has been installed. If compilation succeeds, `pathdir.jar` will be created.  See [Installation](#installation) for instructions on where to put the new `pathdir.jar` if it is not already there.
 
 ## Author
 
@@ -172,11 +172,11 @@ Northampton, MA 01063
 
 ## Feedback? Bugs? Feature Requests?
 
-Please visit the [github issue tracker](https://github.com/cstaelin/pathdir-extension/issues?state=open) to submit comments, bug reports, or feature requests.  I'm also more than willing to accept pull requests.
+Please visit the [github issue tracker](https://github.com/cstaelin/Pathdir-Extension/issues?state=open) to submit comments, bug reports, or feature requests.  I'm also more than willing to accept pull requests.
 
 ## Credits
 
-Many thanks to the NetLogo developers and the NetLogo user community for answering my questions and suggesting features.
+Many thanks to the NetLogo developers and the NetLogo user community for answering my questions and suggesting  additional features.
 
 ## Terms of Use
 
