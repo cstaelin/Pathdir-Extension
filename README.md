@@ -29,7 +29,7 @@ This package contains the NetLogo **pathdir extension**, which provides NetLogo 
 
 ## Installation
 
-First, [download the latest version of the extension](https://github.com/cstaelin/Pathdir-Extension/releases). Note that the latest version of this extension was compiled against NetLogo 5.0.4. If you are using a different version of NetLogo you might consider building your own jar file ([see building section below](#building)).
+First, [download the latest version of the extension](https://github.com/cstaelin/Pathdir-Extension/releases). Note that the latest version of this extension was compiled against NetLogo 5.0.5. If you are using a different version of NetLogo you might consider building your own jar file ([see building section below](#building)).
 
 Unzip the archive, rename the extracted directory to **pathdir**, and move the **pathdir** directory to the **extensions** directory inside your NetLogo application folder. The NetLogo application will normally be in the Applications folder on the Mac, or under C:\Program Files (x86) on Windows.  Or you can place the pathdir directory in the same directory holding the NetLogo model in which you want to use this extension.
 
