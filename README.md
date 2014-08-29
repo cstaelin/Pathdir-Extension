@@ -1,10 +1,12 @@
 # NetLogo pathdir Extension
+Version 2.0.0 - August 2014
 
 * [Quickstart](#quickstart)
 * [What is it?](#what-is-it)
 * [Installation](#installation)
 * [Examples](#examples)
 * [Primitives](#primitives)
+* [Depreciated primitives](#depreciated-primitives)
 * [Building](#building)
 * [Author](#author)
 * [Feedback](#feedback-bugs-feature-requests)
@@ -23,13 +25,13 @@ Include the extension in your NetLogo model (at the top):
 
 ## What is it?
 
-This package contains the NetLogo **pathdir extension**, which provides NetLogo with some file-related primitives not included in the standard language, particularly primitives related to manipulating directories, moving files, and finding the size and modification dates of files.
+This package contains the NetLogo **pathdir extension**, which provides NetLogo with some file-related primitives not included in the standard language, particularly primitives related to manipulating directories, identifying the current NetLogo model, moving files, and finding the size and modification dates of files.
 
 [back to top](#netlogo-pathdir-extension)
 
 ## Installation
 
-First, [download the latest version of the extension](https://github.com/cstaelin/Pathdir-Extension/releases). Note that the latest version of this extension was compiled against NetLogo 5.0.5. If you are using a different version of NetLogo you might consider building your own jar file ([see building section below](#building)).
+First, [download the latest version of the extension](https://github.com/cstaelin/Pathdir-Extension/releases). Note that the latest version of this extension was compiled against NetLogo 5.1.0. If you are using a different version of NetLogo you might consider building your own jar file ([see building section below](#building)).
 
 Unzip the archive, rename the extracted directory to **pathdir**, and move the **pathdir** directory to the **extensions** directory inside your NetLogo application folder. The NetLogo application will normally be in the Applications folder on the Mac, or under C:\Program Files (x86) on Windows.  Or you can place the pathdir directory in the same directory holding the NetLogo model in which you want to use this extension.
 
@@ -55,11 +57,41 @@ Returns a string with the character used by the host operating system to separat
 
 ---------------------------------------
 
-**pathdir:get-model**
+**pathdir:get-model-path**
 
-*pathdir:get-model*
+*pathdir:get-model-path*
 
-Returns a string with the full (absolute) path to the directory in which the current model is located, as specified in the NetLogo context for the current model.
+Returns a string with the full (absolute) path to the directory in which the current model is located.
+
+NOTE: Returns an empty string ("") if the current model has not yet been saved to a file.
+
+---------------------------------------
+
+**pathdir:get-model-file**
+
+*pathdir:get-model-path*
+
+Returns a string with the filename of the .nologo or .nlogo3d file containing the current model. 
+
+NOTE: Returns an empty string ("") if the current model has not yet been saved to a file.
+
+Stripping the .nlogo extension  (or any extension) is easily done:
+
+    let modelName pathdir:get-model-name
+    let shortName substring modelName 0 (length modelName - position "." reverse modelName - 1)
+
+The model filename can also be concatenated with the path to it:
+
+    let fullModelPath (word pathdir:get-model pathdir:get-separator pathdir:get-model-name)
+
+---------------------------------------
+**pathdir:get-model-name**
+
+*pathdir:get-model-name*
+
+Returns a string with the name of the current model. NetLogo sets the name of the model to the filename of the .nologo or .nlogo3d file containing the model, stripped of the file extension.
+
+NOTE: Returns an empty string ("") if the current model has not yet been saved to a file, although NetLogo calls an unsaved model "Untitled".
 
 ---------------------------------------
 
@@ -155,6 +187,14 @@ Returns the modification date of the file given by the string. The date is retur
 *pathdir:get-date-ms file-string*
 
 Returns the modification date of the file given by the string. The date is returned as the number of milliseconds since the base date of the operating system, making it easy to compare dates down to the millisecond. This time format is useful for comparing the modification dates of two files. If the path given by the string is not an absolute path, i.e., it does not begin at the root of the file system, then the path is assumed to be relative to the current working directory.
+
+---------------------------------------
+
+[back to top](#netlogo-pathdir-extension)
+
+## Depreciated primitives
+
+In Version 1 of this extension, the `get-model-path`, `get-home-path` and `get-CWD-path` primitives were named `get-model`, `get-home` and `get-current`, respectively. The old names may still be used, but are depreciated. They will disappear from a future version. 
 
 ---------------------------------------
 

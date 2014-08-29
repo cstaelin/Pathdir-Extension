@@ -6,21 +6,33 @@ extensions [pathdir]
 
 to go
   
-  print "Get the model directory: pathdir:get-model"
-  show pathdir:get-model
+  print "Get the name of this model: pathdir:get-model-name"
+  let name pathdir:get-model-name
+  show name
+  print "Get the name of the model file: pathdir:get-model-file"
+  set name pathdir:get-model-file
+  show name
+  print "Strip the extension from the model name"
+  set name substring name 0 (length name - position "." reverse name - 1)
+  show name
+  print "Get the path to the model: pathdir:get-model-path"
+  show pathdir:get-model-path
+  print "Put the model file and the path to it together"
+  show (word pathdir:get-model-path pathdir:get-separator pathdir:get-model-file)
+  
   print ""
-  print "Get the user's home directory: pathdir:get-home"
-  show pathdir:get-home
+  print "Get the user's home directory: pathdir:get-home-path"
+  show pathdir:get-home-path
   print ""
-  print "Get the current working directory: pathdir:get-current"
-  show pathdir:get-current
+  print "Get the current working directory: pathdir:get-CWD-path"
+  show pathdir:get-CWD-path
   print ""
   
-  print "Get the directory listing of the home directory: pathdir:list pathdir:get-home"
-  show pathdir:list pathdir:get-home
+  print "Get the directory listing of the home directory: pathdir:list pathdir:get-home-path"
+  show pathdir:list pathdir:get-home-path
   print ""
-  print "Get the directory listing of the current directory: pathdir:list pathdir:get-current"
-  show pathdir:list pathdir:get-current
+  print "Get the directory listing of the current directory: pathdir:list pathdir:get-CWD-path"
+  show pathdir:list pathdir:get-CWD-path
   print ""
   print  "Or more simply, do the same with a relative path: show pathdir:list \"\" "
   show pathdir:list ""
@@ -29,7 +41,7 @@ to go
   ; Here we use isDirectory? to filter out the entries that are not directories in the 
   ; directory listing of the CWD so that we can open the first subdirectory.
   print "Get the directory lising of the first subdirectory in the current directory (if any)."
-  let current filter [pathdir:isDirectory? ?] pathdir:list pathdir:get-current
+  let current filter [pathdir:isDirectory? ?] pathdir:list pathdir:get-CWD-path
   if not empty? current [
     print "That subdirectory is:"
     show first current
@@ -38,9 +50,9 @@ to go
   ]
   print ""
   
-  print "Change the CWD to the user's home directory: set-current-directory pathdir:get-home"
-  set-current-directory pathdir:get-home
-  show pathdir:get-current
+  print "Change the CWD to the user's home directory: set-current-directory pathdir:get-home-path"
+  set-current-directory pathdir:get-home-path
+  show pathdir:get-CWD-path
   print ""
   
   ; We will use the path separator here so we have the right syntax for creating new directories.
@@ -94,10 +106,11 @@ to go
   print "Set the CWD to the directory in which this NetLogo model is located and"
   print "then get the size and date of the 'PathDir.nlogo' file, the latter first as"
   print "a string and then in milliseconds."
-  set-current-directory pathdir:get-model
-  show pathdir:get-size "PathDir.nlogo"
-  show pathdir:get-date "PathDir.nlogo"
-  show pathdir:get-date-ms "PathDir.nlogo"
+  set-current-directory pathdir:get-model-path
+  set name pathdir:get-model-file
+  show pathdir:get-size name
+  show pathdir:get-date name
+  show pathdir:get-date-ms name
   
   
 end
@@ -478,7 +491,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.4
+NetLogo 5.1.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -494,9 +507,9 @@ NetLogo 5.0.4
 @#$#@#$#@
 default
 0.0
--0.2 0 1.0 0.0
+-0.2 0 0.0 1.0
 0.0 1 1.0 0.0
-0.2 0 1.0 0.0
+0.2 0 0.0 1.0
 link direction
 true
 0
