@@ -1,5 +1,5 @@
 # NetLogo pathdir Extension
-Version 2.0.0 - August 2014
+Version 3.0.0 - September 2016 (for NetLogo v6.0)
 
 * [Quickstart](#quickstart)
 * [What is it?](#what-is-it)
@@ -31,9 +31,9 @@ This package contains the NetLogo **pathdir extension**, which provides NetLogo 
 
 ## Installation
 
-First, [download the latest version of the extension](https://github.com/cstaelin/Pathdir-Extension/releases). Note that the latest version of this extension was compiled against NetLogo 5.1.0. If you are using a different version of NetLogo you might consider building your own jar file ([see building section below](#building)).
+First, [download the latest version of the extension](https://github.com/cstaelin/Pathdir-Extension/releases). Note that this version (v3.0.0) of this extension was compiled against NetLogo 6.0 and will not work with earlier versions of NetLogo. If you are using v5.x of NetLogo you should download and install v2.0.0 of this extension.
 
-Unzip the archive, rename the extracted directory to **pathdir**, and move the **pathdir** directory to the **extensions** directory inside your NetLogo application folder. The NetLogo application will normally be in the Applications folder on the Mac, or under C:\Program Files (x86) on Windows.  Or you can place the pathdir directory in the same directory holding the NetLogo model in which you want to use this extension.
+Unzip the archive, rename the extracted directory to **pathdir**, and move the **pathdir** directory to the **extensions** directory inside your NetLogo application folder. The NetLogo application will normally be in the Applications folder on the Mac, or under C:\Program Files on Windows, and the **extensions** directory is in the **app** subdirectory of the NetLogo application.  Or you can place the pathdir directory in the same directory holding the NetLogo model in which you want to use this extension.
 
 For more information on NetLogo extensions:
 [http://ccl.northwestern.edu/netlogo/docs/extensions.html](http://ccl.northwestern.edu/netlogo/docs/extensions.html)
@@ -95,17 +95,17 @@ NOTE: Returns an empty string ("") if the current model has not yet been saved t
 
 ---------------------------------------
 
-**pathdir:get-home**
+**pathdir:get-home-path**
 
-*pathdir:get-home*
+*pathdir:get-home-path*
 
 Returns a string with the full (absolute) path to the user's home directory, as specified by the "user.home" environment variable of the host operating system.  This may not exist for all operating systems?
 
 ---------------------------------------
 
-**pathdir:get-current**
+**pathdir:get-CWD-path**
 
-*pathdir:get-current*
+*pathdir:get-CWD-path*
 
 Returns a string with the full (absolute) path to the current working directory (CWD) as specified in the NetLogo context for the current model.  The CWD may be set by the NetLogo command set-current-directory.  Note that set-current-directory will accept a path to a directory that does not actually exist and subsequently using the nonexistent CWD, say to open a file, will normally cause an error.  Note too that when a NetLogo model first opens, the CWD is set to the directory from which the model is opened.
 
@@ -137,7 +137,7 @@ Returns TRUE if the file or directory given by the string both exists **and** is
 
 Returns a NetLogo list of strings, each element of which contains an element of the directory listing of the specified directory.  If the path given by the string is not an absolute path, i.e., it does not begin at the root of the file system, then the path is assumed to be relative to the current working directory.  If the directory is empty, the command returns an empty list.  To get a listing of the CWD one could use 
 
-    pathdir:list pathdir:get-current 
+    pathdir:list pathdir:get-CWD-path 
 
 or, more simply, 
 
@@ -194,7 +194,7 @@ Returns the modification date of the file given by the string. The date is retur
 
 ## Depreciated primitives
 
-In Version 1 of this extension, the `get-model-path`, `get-home-path` and `get-CWD-path` primitives were named `get-model`, `get-home` and `get-current`, respectively. The old names may still be used, but are depreciated. They will disappear from a future version. 
+In Version 1 of this extension, the `get-model-path`, `get-home-path` and `get-CWD-path` primitives were named `get-model`, `get-home` and `get-current`, respectively. The old names are no longer recognized. 
 
 ---------------------------------------
 

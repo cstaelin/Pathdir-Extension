@@ -1,4 +1,4 @@
-// PathDirExtension - V 2.0.0 (August 2014)
+// PathDirExtension - V 3.0.0 (September 2016)
 // Charles Staelin, Smith College
 
 /*
@@ -7,27 +7,16 @@
  * REMEMBER THAT ANY PROCEDURES THAT FOOL WITH YOUR FILES MAY BE DANGEROUS!
  */
 
-/* Written for Java 1.6, which is still the NetLogo standard.
+/* Written NetLogo v6.0 and for Java 1.8.
  */
-
-/* The addition of get-model-name and get-model-file led to a decision to 
- * rename get-model in version 1 to get-model-path. That in turn led to 
- * renaming get-home to get-home-path and get-current to get-CWD-path. The old 
- * names for the primitives still exist, but are depreciated and will 
- * eventually be eliminated.
-*/
 
 package org.nlogo.extensions.pathdir;
 
-import org.nlogo.api.LogoException;
-import org.nlogo.api.ExtensionException;
-import org.nlogo.api.Argument;
-import org.nlogo.api.Syntax;
-import org.nlogo.api.Context;
-import org.nlogo.api.LogoListBuilder;
-import org.nlogo.api.DefaultCommand;
-import org.nlogo.api.DefaultReporter;
-import org.nlogo.nvm.ExtensionContext;
+import org.nlogo.api.*;
+import org.nlogo.core.Syntax;
+import org.nlogo.core.SyntaxJ;
+
+// import org.nlogo.nvm.ExtensionContext;
 import org.nlogo.workspace.AbstractWorkspace;
 
 import java.io.File;
@@ -75,11 +64,8 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
   public void load(org.nlogo.api.PrimitiveManager primManager) {
     primManager.addPrimitive("get-separator", new getSeparator());
     primManager.addPrimitive("get-model-path", new getModelDirectory());
-    primManager.addPrimitive("get-model", new getModelDirectory());
     primManager.addPrimitive("get-home-path", new getHomeDirectory());
-    primManager.addPrimitive("get-home", new getHomeDirectory());
     primManager.addPrimitive("get-CWD-path", new getCurrentDirectory());
-    primManager.addPrimitive("get-current", new getCurrentDirectory());
     primManager.addPrimitive("get-model-name", new getModelName());
     primManager.addPrimitive("get-model-file", new getModelFile());
     primManager.addPrimitive("create", new createDirectory());
@@ -95,11 +81,11 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
 
   // Returns the path separator for the current operating system, for 
   // use in creating new path strings in NetLogo.
-  public static class getSeparator extends DefaultReporter {
+  public static class getSeparator implements Reporter {
 
     @Override
     public Syntax getSyntax() {
-      return Syntax.reporterSyntax(Syntax.StringType());
+      return SyntaxJ.reporterSyntax(Syntax.StringType());
     }
 
     @Override
@@ -111,11 +97,11 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
   // Returns the absolute directory path to the users home directory,
   // as specified "user.home" environment variable in the current
   // operating system.
-  public static class getHomeDirectory extends DefaultReporter {
+  public static class getHomeDirectory implements Reporter {
 
     @Override
     public Syntax getSyntax() {
-      return Syntax.reporterSyntax(Syntax.StringType());
+      return SyntaxJ.reporterSyntax(Syntax.StringType());
     }
 
     @Override
@@ -135,11 +121,11 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
 
   // Returns the absolute directory path to the current working directory
   // as specified in the NetLogo model's context.
-  public static class getCurrentDirectory extends DefaultReporter {
+  public static class getCurrentDirectory implements Reporter {
 
     @Override
     public Syntax getSyntax() {
-      return Syntax.reporterSyntax(Syntax.StringType());
+      return SyntaxJ.reporterSyntax(Syntax.StringType());
     }
 
     @Override
@@ -150,25 +136,23 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
 
   // Returns the name of the NetLogo model. This will always be the name of 
   // the .nlogo or .nlogo3d file that contains the model, without the file
-  // extension.
-  // If the current model has not been yet saved to a file, NetLogo calls 
-  // it "Untitled", but we return an empty string.
-  public static class getModelName extends DefaultReporter {
+  // extension. If the current model has not been yet saved to a file, NetLogo 
+  // displays it "Untitled", but we return an empty string.
+  // In v6.0, the workspace is directly available from the context and the 
+  // model name (if it has yet been set) from that, but the display name is 
+  // only available through casting the workspace as an AbstractWorkspace.
+  public static class getModelName implements Reporter {
 
     @Override
     public Syntax getSyntax() {
-      return Syntax.reporterSyntax(Syntax.StringType());
+      return SyntaxJ.reporterSyntax(Syntax.StringType());
     }
 
     @Override
     public Object report(Argument args[], Context context) throws ExtensionException {
 
-      ExtensionContext cntx;
-      AbstractWorkspace wkspc;
-      String modelName;
-      cntx = (ExtensionContext) context;
-      wkspc = (AbstractWorkspace) cntx.workspace();
-      modelName = wkspc.modelNameForDisplay();
+      Workspace wkspc = context.workspace();
+      String modelName = ((AbstractWorkspace) wkspc).modelNameForDisplay();
       if (wkspc.getModelFileName() == null && modelName.equals("Untitled") ) {
         modelName = "";
       }
@@ -178,25 +162,20 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
   }
   
   // Returns the name of the .nlogo or .nlogo3d file that contains the 
-  // current model.
-  // If the current model has not yet been saved to a file, returns an 
-  // empty string.
-  public static class getModelFile extends DefaultReporter {
+  // current model.  If the current model has not yet been saved to a file, 
+  // returns an empty string.
+  public static class getModelFile implements Reporter {
 
     @Override
     public Syntax getSyntax() {
-      return Syntax.reporterSyntax(Syntax.StringType());
+      return SyntaxJ.reporterSyntax(Syntax.StringType());
     }
 
     @Override
     public Object report(Argument args[], Context context) throws ExtensionException {
 
-      ExtensionContext cntx;
-      AbstractWorkspace wkspc;
-      String modelFile;
-      cntx = (ExtensionContext) context;
-      wkspc = (AbstractWorkspace) cntx.workspace();
-      modelFile = wkspc.getModelFileName();
+      Workspace wkspc = context.workspace();
+      String modelFile = wkspc.getModelFileName();
       if (modelFile == null) {
         modelFile = "";
       }
@@ -208,22 +187,18 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
   // Returns the absolute path to the directory containing the current model.
   // If the current model has not yet been saved to a file, returns an empty
   // string.
-  public static class getModelDirectory extends DefaultReporter {
+  public static class getModelDirectory implements Reporter {
 
     @Override
     public Syntax getSyntax() {
-      return Syntax.reporterSyntax(Syntax.StringType());
+      return SyntaxJ.reporterSyntax(Syntax.StringType());
     }
 
     @Override
     public Object report(Argument args[], Context context) throws ExtensionException {
 
-      ExtensionContext cntx;
-      AbstractWorkspace wkspc;
-      String modelDir;
-      cntx = (ExtensionContext) context;
-      wkspc = (AbstractWorkspace) cntx.workspace();
-      modelDir = wkspc.getModelDir();
+      Workspace wkspc = context.workspace();
+      String modelDir = wkspc.getModelDir();
       if (modelDir == null) {
         modelDir = "";
       }
@@ -238,11 +213,11 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
   // Note that this procedure will create as many intermediate directories
   // as are needed to create the final directory in the specified path.
   // If the directory already exists, nothing is done.
-  public static class createDirectory extends DefaultCommand {
+  public static class createDirectory implements Command {
 
     @Override
     public Syntax getSyntax() {
-      return Syntax.commandSyntax(new int[]{Syntax.StringType()});
+      return SyntaxJ.commandSyntax(new int[]{Syntax.StringType()});
     }
 
     @Override
@@ -260,11 +235,11 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
 
   // Returns TRUE if the argument both exists and is a directory; otherwise, 
   // returns FALSE.
-  public static class isDirectory extends DefaultReporter {
+  public static class isDirectory implements Reporter {
 
     @Override
     public Syntax getSyntax() {
-      return Syntax.reporterSyntax(new int[]{Syntax.StringType()}, Syntax.BooleanType());
+      return SyntaxJ.reporterSyntax(new int[]{Syntax.StringType()}, Syntax.BooleanType());
     }
 
     @Override
@@ -280,11 +255,11 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
   // not contain an absolute path, the path is assumed to be relative to 
   // the current working directory as specified in the NetLogo model's
   // context.
-  public static class listDirectory extends DefaultReporter {
+  public static class listDirectory implements Reporter {
 
     @Override
     public Syntax getSyntax() {
-      return Syntax.reporterSyntax(new int[]{Syntax.StringType()}, Syntax.ListType());
+      return SyntaxJ.reporterSyntax(new int[]{Syntax.StringType()}, Syntax.ListType());
     }
 
     @Override
@@ -309,11 +284,11 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
   // to rename a file or directory as well.  If either input string does not
   // contain an absolute path, it assumes the directory or file is located in
   // the current working directory as specified in the NetLogo model's context.
-  public static class moveFileOrDirectory extends DefaultCommand {
+  public static class moveFileOrDirectory implements Command {
 
     @Override
     public Syntax getSyntax() {
-      return Syntax.commandSyntax(new int[]{Syntax.StringType(),
+      return SyntaxJ.commandSyntax(new int[]{Syntax.StringType(),
         Syntax.StringType()});
     }
 
@@ -346,11 +321,11 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
   // Only directories may be deleted (as there is already a NetLogo
   // primitive for files) and the directory must be
   // both empty and not hidden.
-  public static class deleteDirectory extends DefaultCommand {
+  public static class deleteDirectory implements Command {
 
     @Override
     public Syntax getSyntax() {
-      return Syntax.commandSyntax(new int[]{Syntax.StringType()});
+      return SyntaxJ.commandSyntax(new int[]{Syntax.StringType()});
     }
 
     @Override
@@ -375,11 +350,11 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
   }
 
   // Returns true if the file exists; otherwise false.
-  public static class fileExists extends DefaultReporter {
+  public static class fileExists implements Reporter {
 
     @Override
     public Syntax getSyntax() {
-      return Syntax.reporterSyntax(new int[]{Syntax.StringType()}, Syntax.BooleanType());
+      return SyntaxJ.reporterSyntax(new int[]{Syntax.StringType()}, Syntax.BooleanType());
     }
 
     @Override
@@ -391,11 +366,11 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
   }
 
   // Returns the size of the file in bytes.
-  public static class getFileSize extends DefaultReporter {
+  public static class getFileSize implements Reporter {
 
     @Override
     public Syntax getSyntax() {
-      return Syntax.reporterSyntax(new int[]{Syntax.StringType()}, Syntax.NumberType());
+      return SyntaxJ.reporterSyntax(new int[]{Syntax.StringType()}, Syntax.NumberType());
     }
 
     @Override
@@ -413,11 +388,11 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
 
   // Returns the modify date of the file in milliseconds since the start of 
   // system time.
-  public static class getFileDateTimeInMS extends DefaultReporter {
+  public static class getFileDateTimeInMS implements Reporter {
 
     @Override
     public Syntax getSyntax() {
-      return Syntax.reporterSyntax(new int[]{Syntax.StringType()}, Syntax.NumberType());
+      return SyntaxJ.reporterSyntax(new int[]{Syntax.StringType()}, Syntax.NumberType());
     }
 
     @Override
@@ -434,11 +409,11 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
   }
 
   // Returns the modify date/time of the file as a string.
-  public static class getFileDateTimeAsString extends DefaultReporter {
+  public static class getFileDateTimeAsString implements Reporter {
 
     @Override
     public Syntax getSyntax() {
-      return Syntax.reporterSyntax(new int[]{Syntax.StringType()}, Syntax.StringType());
+      return SyntaxJ.reporterSyntax(new int[]{Syntax.StringType()}, Syntax.StringType());
     }
 
     @Override

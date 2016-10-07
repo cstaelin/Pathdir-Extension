@@ -1,11 +1,11 @@
 extensions [pathdir]
 
 ; !!CAUTION: THIS PROCEDURE CREATES AND DELETES DIRECTORIES IN THE USER'S HOME DIRECTORY!!
-;   MAKE SURE THERE ARE NOT ALREADY DIRECTORIES WITH THE NAMES "dir1", "dir1a" or "dir1b" 
+;   MAKE SURE THERE ARE NOT ALREADY DIRECTORIES WITH THE NAMES "dir1", "dir1a" or "dir1b"
 ;   THERE AS THEY MAY BE BE DELETED.
 
 to go
-  
+
   print "Get the name of this model: pathdir:get-model-name"
   let name pathdir:get-model-name
   show name
@@ -19,7 +19,7 @@ to go
   show pathdir:get-model-path
   print "Put the model file and the path to it together"
   show (word pathdir:get-model-path pathdir:get-separator pathdir:get-model-file)
-  
+
   print ""
   print "Get the user's home directory: pathdir:get-home-path"
   show pathdir:get-home-path
@@ -27,7 +27,7 @@ to go
   print "Get the current working directory: pathdir:get-CWD-path"
   show pathdir:get-CWD-path
   print ""
-  
+
   print "Get the directory listing of the home directory: pathdir:list pathdir:get-home-path"
   show pathdir:list pathdir:get-home-path
   print ""
@@ -37,30 +37,32 @@ to go
   print  "Or more simply, do the same with a relative path: show pathdir:list \"\" "
   show pathdir:list ""
   print ""
-  
-  ; Here we use isDirectory? to filter out the entries that are not directories in the 
+
+  ; Here we use isDirectory? to filter out the entries that are not directories in the
   ; directory listing of the CWD so that we can open the first subdirectory.
   print "Get the directory lising of the first subdirectory in the current directory (if any)."
-  let current filter [pathdir:isDirectory? ?] pathdir:list pathdir:get-CWD-path
+  let current filter pathdir:isDirectory? (pathdir:list pathdir:get-CWD-path)
   if not empty? current [
-    print "That subdirectory is:"
+    print "The list of subdirectories is:"
+    show current
+    print "The first subdirectory is:"
     show first current
     print "And its listing is:"
     show pathdir:list first current
   ]
   print ""
-  
+
   print "Change the CWD to the user's home directory: set-current-directory pathdir:get-home-path"
   set-current-directory pathdir:get-home-path
   show pathdir:get-CWD-path
   print ""
-  
+
   ; We will use the path separator here so we have the right syntax for creating new directories.
   print "Get the path separator for this OS: let sep pathdir:get-separator"
   let sep pathdir:get-separator
   show sep
   print ""
-  
+
   ; Before proceding we make sure that the user does not have a directory "dir1" in their
   ; home directory so that the rest of this procedure will do no damage.
   if pathdir:isDirectory? "dir1" [
@@ -86,13 +88,13 @@ to go
   print "And list dir1 to see that dir1a has been renamed to dir1b"
   show pathdir:list "dir1"
   print ""
-  
+
   print "Now move dir1b up a level: pathdir:move (word \"dir1\" sep \"dir1b\") \"dir1b\""
   pathdir:move (word "dir1" sep "dir1b") "dir1b"
   print "And list CWD to see that dir1b is there"
   show pathdir:list ""
   print ""
-  
+
   print "Finally, cleanup by deleting the new directories:"
   print "pathdir:delete \"dir1b\""
   pathdir:delete "dir1b"
@@ -101,7 +103,7 @@ to go
   print ""
   print "All gone"
   show pathdir:list ""
-  
+
   print ""
   print "Set the CWD to the directory in which this NetLogo model is located and"
   print "then get the size and date of the 'PathDir.nlogo' file, the latter first as"
@@ -111,17 +113,17 @@ to go
   show pathdir:get-size name
   show pathdir:get-date name
   show pathdir:get-date-ms name
-  
-  
+
+
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
 10
-649
-470
-16
-16
+647
+448
+-1
+-1
 13.0
 1
 10
@@ -145,59 +147,39 @@ ticks
 @#$#@#$#@
 ## WHAT IS IT?
 
-The pathdir extension:
+(a general understanding of what the model is trying to show or explain)
 
+## HOW IT WORKS
 
-This extension contains a number of procedures for finding paths and for creating,
-renaming and deleting directories.
+(what rules the agents use to create the overall behavior of the model)
 
+## HOW TO USE IT
 
-**pathdir:get-separator**
-Returns a string with the character used by the host operating system to separate directories in the path.  E.g., for Windows the string "\\\\" would be returned (as the backslash must be escaped), while for Mac OSX, the string "/" would be returned.  Useful for creating operating system-independent path strings
+(how to use the model, including a description of each of the items in the Interface tab)
 
-**pathdir:get-model**
-Returns a string with the full (absolute) path to the directory in which the current model is located, as specified in the NetLogo context for the current model.
+## THINGS TO NOTICE
 
-**pathdir:get-home**
-Returns a string with the full (absolute) path to the user's home directory, as specified by the "user.home" environment variable of the host operating system.  This may not exist for all operating systems?
+(suggested things for the user to notice while running the model)
 
-**pathdir:get-current**
-Returns a string with the full (absolute) path to the current working directory (CWD) as specified in the NetLogo context for the current model.  The CWD may be set by the NetLogo command **set-current-directory _string_**.  Note that **set-current-directory** will accept a path to a directory that does not actually exist and subsequently using the nonexistent CWD, say to open a file, will normally cause an error.  Note that when a NetLogo model first opens, the CWD is set to the directory from which the model is opened.
+## THINGS TO TRY
 
-**pathdir:create _string_**
-Creates the directory specified in the given string.  If the string does not contain an absolute path, i.e. the path does not begin at the root of the file system, then the directory is created relative to the current working directory.  Note that this procedure will create as many intermediate directories as are needed to create the last directory in the path.  So, if one specifies `pathdir:create "dir1\\dir2\\dir3"` (using Windows path syntax) and if dir1 does not exist in the CWD, then the procedure will create dir1 in the CWD, dir2 in dir1, and finally dir3 in dir2.  If the directory to be created already exists, then no action is taken.
-
-**pathdir:isDirectory? _string_**
-Returns TRUE if the file or directory given by the string both exists and is a directory.  Otherwise, returns FALSE.  (Note that the NetLogo command **file-exists? _string_** can be used to see if a file or directory simply exists.)  If the path given by the string is not an absolute path, i.e., it does not begin at the root of the file system, then the path is assumed to be relative to the current working directory.
-
-**pathdir:list _string_**
-Returns a NetLogo list of strings, each element of which contains an element of the directory listing of the specified directory.  If the path given by the string is not an absolute path, i.e., it does not begin at the root of the file system, then the path is assumed to be relative to the current working directory.  If the directory is empty, the command returns an empty list.  To get a listing of the CWD one could use `pathdir:list pathdir:get-current` or, more simply, `pathdir:list ""`.
-
-**pathdir:move _string1_ _string2_**
-Moves or simply renames the file or directory given by string1 to string2.  If either string does not contain an absolute path, i.e., the path does not begin at the root of the file system, then the path is assumed to be relative to the current working directory.  E.g., 
-`pathdir:move "dir1\\file1.csv" (word pathdir:get-home "\\keep.csv")`
-will rename and move the file "file1.csv" in dir1 of the CWD to "keep.csv" in the user's home directory.  If the file with the same name already exists at the destination, an error is returned.
-
-**pathdir:delete _string_**
-Deletes the directory given by the string.  The directory must be empty and must not be hidden.  (The check for a read-only directory currently does not work.)  If the path given by the string is not an absolute path, i.e., it does not begin at the root of the file system, then the path is assumed to be relative to the current working directory.  This command will return an error if the path refers to a file rather than a directory as there already is a NetLogo command for deleting a file: **file-delete _string_**.
-
-**pathdir:get-size _string_**
-Returns the size in bytes of the file given by the string. If the path given by the string is not an absolute path, i.e., it does not begin at the root of the file system, then the path is assumed to be relative to the current working directory.
-
-**pathdir:get-date _string_**
-Returns the modification date of the file given by the string. The date is returned as a string in the form dd-MM-yyyy HH-mm-ss, where dd is the day in the month, MM the month in the year, yyyy the year, HH the hour in 24-hour time, mm the minute in the hour and ss the second in the minute. Two dates may be compared with the relational operators. Thus pathdir:get-date "file1" > pathdir:get-date "file2" will be true if file1 has a later modification date than file2, and false otherwise. If the path given by the string is not an absolute path, i.e., it does not begin at the root of the file system, then the path is assumed to be relative to the current working directory.
-
-**pathdir:get-date-ms _string_**
-Returns the modification date of the file given by the string. The date is returned as the number of milliseconds since the base date of the operating system, making it easy to compare dates down to the millisecond. If the path given by the string is not an absolute path, i.e., it does not begin at the root of the file system, then the path is assumed to be relative to the current working directory.
+(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
 
 ## EXTENDING THE MODEL
 
-Anyone is welcome to extend and/or refine the functionality of this extension.
+(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
+
+## NETLOGO FEATURES
+
+(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
+
+## RELATED MODELS
+
+(models in the NetLogo Models Library and elsewhere which are of related interest)
 
 ## CREDITS AND REFERENCES
 
-This extension was written by Charles Staelin, Smith College, Northampton, MA.
-It was updated for NetLogo 5.0 in June 2011, and the get-size, get-date and get-date-ms primitives were added in October 2012.
+(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
 @#$#@#$#@
 default
 true
@@ -393,12 +375,19 @@ Polygon -7500403 true true 135 90 120 45 150 15 180 45 165 90
 
 sheep
 false
-0
-Rectangle -7500403 true true 151 225 180 285
-Rectangle -7500403 true true 47 225 75 285
-Rectangle -7500403 true true 15 75 210 225
-Circle -7500403 true true 135 75 150
-Circle -16777216 true false 165 76 116
+15
+Circle -1 true true 203 65 88
+Circle -1 true true 70 65 162
+Circle -1 true true 150 105 120
+Polygon -7500403 true false 218 120 240 165 255 165 278 120
+Circle -7500403 true false 214 72 67
+Rectangle -1 true true 164 223 179 298
+Polygon -1 true true 45 285 30 285 30 240 15 195 45 210
+Circle -1 true true 3 83 150
+Rectangle -1 true true 65 221 80 296
+Polygon -1 true true 195 285 210 285 210 240 240 210 195 210
+Polygon -7500403 true false 276 85 285 105 302 99 294 83
+Polygon -7500403 true false 219 85 210 105 193 99 201 83
 
 square
 false
@@ -484,25 +473,24 @@ Line -7500403 true 40 84 269 221
 Line -7500403 true 40 216 269 79
 Line -7500403 true 84 40 221 269
 
+wolf
+false
+0
+Polygon -16777216 true false 253 133 245 131 245 133
+Polygon -7500403 true true 2 194 13 197 30 191 38 193 38 205 20 226 20 257 27 265 38 266 40 260 31 253 31 230 60 206 68 198 75 209 66 228 65 243 82 261 84 268 100 267 103 261 77 239 79 231 100 207 98 196 119 201 143 202 160 195 166 210 172 213 173 238 167 251 160 248 154 265 169 264 178 247 186 240 198 260 200 271 217 271 219 262 207 258 195 230 192 198 210 184 227 164 242 144 259 145 284 151 277 141 293 140 299 134 297 127 273 119 270 105
+Polygon -7500403 true true -1 195 14 180 36 166 40 153 53 140 82 131 134 133 159 126 188 115 227 108 236 102 238 98 268 86 269 92 281 87 269 103 269 113
+
 x
 false
 0
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
-
 @#$#@#$#@
-NetLogo 5.1.0
+NetLogo 6.0-BETA1
+@#$#@#$#@
+need-to-manually-make-preview-for-this-model
 @#$#@#$#@
 @#$#@#$#@
-@#$#@#$#@
-<experiments>
-  <experiment name="Linux_test" repetitions="1" runMetricsEveryStep="true">
-    <setup>reset-ticks</setup>
-    <go>go</go>
-    <timeLimit steps="1"/>
-    <metric>ticks</metric>
-  </experiment>
-</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
@@ -515,7 +503,6 @@ true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
-
 @#$#@#$#@
 0
 @#$#@#$#@
