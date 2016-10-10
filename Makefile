@@ -3,7 +3,7 @@ ifeq ($(origin JAVA_HOME), undefined)
 endif
 
 ifeq ($(origin NETLOGO), undefined)
-  NETLOGO=../..
+  NETLOGO=../../..
 endif
 
 JAVAC=$(JAVA_HOME)/bin/javac
