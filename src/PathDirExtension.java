@@ -1,4 +1,4 @@
-// PathDirExtension - V 3.0.0 (September 2016)
+// PathDirExtension - V 3.0.1 (December 2016)
 // Charles Staelin, Smith College
 
 /*
@@ -15,9 +15,6 @@ package org.nlogo.extensions.pathdir;
 import org.nlogo.api.*;
 import org.nlogo.core.Syntax;
 import org.nlogo.core.SyntaxJ;
-
-// import org.nlogo.nvm.ExtensionContext;
-import org.nlogo.workspace.AbstractWorkspace;
 
 import java.io.File;
 import java.util.Date;
@@ -59,6 +56,29 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
       throw eex;
     }
   }
+  
+  // strips the path and the file extension from the string.
+  // should be pretty robust with wierd paths and filenames.
+  private static String getFilenameOnly(String s) {
+
+    String separator = File.separator;
+    String filename;
+
+    // Remove the path upto the filename.
+    int lastSeparatorIndex = s.lastIndexOf(separator);
+    if (lastSeparatorIndex == -1) {
+        filename = s;
+    } else {
+        filename = s.substring(lastSeparatorIndex + 1);
+    }
+
+    // Remove the extension.
+    int extensionIndex = filename.lastIndexOf(".");
+    if (extensionIndex == -1)
+        return filename;
+
+    return filename.substring(0, extensionIndex);
+}
 
   @Override
   public void load(org.nlogo.api.PrimitiveManager primManager) {
@@ -139,8 +159,11 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
   // extension. If the current model has not been yet saved to a file, NetLogo 
   // displays it "Untitled", but we return an empty string.
   // In v6.0, the workspace is directly available from the context and the 
-  // model name (if it has yet been set) from that, but the display name is 
-  // only available through casting the workspace as an AbstractWorkspace.
+  // model's filename (if it has yet been set) from that. In prior versions
+  // we used the display name, but it turns out that the display name is not
+  // set in BehaviorSpace runs other than the ones actually displayed, and 
+  // thus it comes back as "Untitled". So we go with stripping the extension
+  // from the filename.
   public static class getModelName implements Reporter {
 
     @Override
@@ -152,8 +175,9 @@ public class PathDirExtension extends org.nlogo.api.DefaultClassManager {
     public Object report(Argument args[], Context context) throws ExtensionException {
 
       Workspace wkspc = context.workspace();
-      String modelName = ((AbstractWorkspace) wkspc).modelNameForDisplay();
-      if (wkspc.getModelFileName() == null && modelName.equals("Untitled") ) {
+//      String modelName = ((AbstractWorkspace) wkspc).modelNameForDisplay();
+      String modelName = getFilenameOnly(wkspc.getModelFileName());
+      if ( modelName.equals("Untitled") ) {
         modelName = "";
       }
       
