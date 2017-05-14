@@ -1,5 +1,5 @@
 # NetLogo pathdir Extension
-Version 3.0.1 - December 2016 (for NetLogo v6.0)
+Version 3.0.2 - May 2017 (for NetLogo v6.0)
 
 * [Quickstart](#quickstart)
 * [What is it?](#what-is-it)
@@ -202,7 +202,7 @@ In Version 1 of this extension, the `get-model-path`, `get-home-path` and `get-C
 
 ## Building
 
-The Makefile uses the NETLOGO environment variable to find the NetLogo installation. However, if NETLOGO has not been defined, the Makefile assumes that it is being run from the **aa/extensions/pathdir** directory under the directory in which NetLogo has been installed. If compilation succeeds, `pathdir.jar` and `pathdir.jar.pack.gz` will be created.  See [Installation](#installation) for instructions on where to put the new `pathdir.jar` and `pathdir.jar.pack.gz` if they are not already there.
+The Makefile uses the NETLOGO environment variable to find the NetLogo installation. However, if NETLOGO has not been defined, the Makefile assumes that it is being run from the **app/extensions/pathdir** directory under the directory in which NetLogo has been installed. If compilation succeeds, `pathdir.jar` and `pathdir.jar.pack.gz` will be created.  See [Installation](#installation) for instructions on where to put the new `pathdir.jar` and `pathdir.jar.pack.gz` if they are not already there.
 
 ## Author
 
