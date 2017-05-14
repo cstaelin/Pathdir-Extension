@@ -69,7 +69,7 @@ NOTE: Returns an empty string ("") if the current model has not yet been saved t
 
 **pathdir:get-model-file**
 
-*pathdir:get-model-path*
+*pathdir:get-model-file*
 
 Returns a string with the filename of the .nologo or .nlogo3d file containing the current model. 
 
@@ -202,7 +202,7 @@ In Version 1 of this extension, the `get-model-path`, `get-home-path` and `get-C
 
 ## Building
 
-The Makefile uses the NETLOGO environment variable to find the NetLogo installation. However, if NETLOGO has not been defined, the Makefile assumes that it is being run from the **extensions/pathdir** directory under the directory in which NetLogo has been installed. If compilation succeeds, `pathdir.jar` and `pathdir.jar.pack.gz` will be created.  See [Installation](#installation) for instructions on where to put the new `pathdir.jar` and `pathdir.jar.pack.gz` if they are not already there.
+The Makefile uses the NETLOGO environment variable to find the NetLogo installation. However, if NETLOGO has not been defined, the Makefile assumes that it is being run from the **aa/extensions/pathdir** directory under the directory in which NetLogo has been installed. If compilation succeeds, `pathdir.jar` and `pathdir.jar.pack.gz` will be created.  See [Installation](#installation) for instructions on where to put the new `pathdir.jar` and `pathdir.jar.pack.gz` if they are not already there.
 
 ## Author
 
