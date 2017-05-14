@@ -1,5 +1,5 @@
 # NetLogo pathdir Extension
-Version 3.0.2 - May 2017 (for NetLogo v6.0)
+Version 3.0.3 - May 2017 (for NetLogo v6.0)
 
 * [Quickstart](#quickstart)
 * [What is it?](#what-is-it)
