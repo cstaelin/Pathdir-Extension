@@ -1,4 +1,4 @@
-# If this Makefile is not being run from the NetLogo-6.x.x/app/extensions/shell
+# If this Makefile is not being run from the NetLogo-6.x.x/app/extensions/pathdir
 # directory, NETLOGO must be set before the make to the location of the NetLogo
 # package.  E.g., in Cygwin this would be something like 
 # export NETLOGO = "c:/Program Files/NetLogo 6.0.1"
