@@ -12,8 +12,8 @@ ifeq ($(origin NETLOGO), undefined)
 endif
 
 # NetLogo.jar files are now modefied by the NetLogo version number,
-# e.g., netlogo-6.0.1.jar. Thus we shell to the "find" command which 
-# looks in the app forlder to get the .jar file name. I tried to 
+# e.g., netlogo-6.1.0.jar. Thus we shell to the "find" command which 
+# looks in the app folder to get the .jar file name. I tried to 
 # accomplish this with the wildcard function, but it doesn't seem to 
 # handle cases where there are blanks in file/direcotry names, as is 
 # common in Windows.

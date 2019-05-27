@@ -1,4 +1,4 @@
-// PathDirExtension - V 3.0.1 (December 2016)
+// PathDirExtension - V 3.1.0 (May 2019)
 // Charles Staelin, Smith College
 
 /*
@@ -7,7 +7,7 @@
  * REMEMBER THAT ANY PROCEDURES THAT FOOL WITH YOUR FILES MAY BE DANGEROUS!
  */
 
-/* Written NetLogo v6.0 and for Java 1.8.
+/* Written for NetLogo v6.1 and for Java 1.8.
  */
 
 package org.nlogo.extensions.pathdir;
