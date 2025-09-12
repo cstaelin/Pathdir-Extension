@@ -1,39 +1,28 @@
 # NetLogo pathdir Extension
-Version 3.1 - May 2019 (for NetLogo v6.1, 6.2 & 6.3)
+Version 5.2 - September 2025 (for NetLogo v7)
 
-* [Quickstart](#quickstart)
 * [What is it?](#what-is-it)
 * [Installation](#installation)
 * [Examples](#examples)
 * [Primitives](#primitives)
-* [Depreciated primitives](#depreciated-primitives)
-* [Building](#building)
 * [Author](#author)
 * [Feedback](#feedback-bugs-feature-requests)
 * [Credits](#credits)
 * [Terms of use](#terms-of-use)
 
-## Quickstart
-
-[Install the pathdir extension](#installation)
-
-Include the extension in your NetLogo model (at the top):
-
-    extensions [pathdir]
-
-[back to top](#netlogo-pathdir-extension)
-
 ## What is it?
 
-This package contains the NetLogo **pathdir extension**, which provides NetLogo with some file-related primitives not included in the standard language, particularly primitives related to manipulating directories, identifying the current NetLogo model, moving files, and finding the size and modification dates of files.
+This package contains the NetLogo **pathdir extension**, which provides NetLogo with some file-related primitives not included in the standard language, particularly primitives related to manipulating directories, identifying the current NetLogo model, moving files, finding the size and modification dates of files, and getting the values of environment variables and system properties.
 
 [back to top](#netlogo-pathdir-extension)
 
 ## Installation
 
-First, [download the latest version of the extension](https://github.com/cstaelin/Pathdir-Extension/releases). Note that this version (v3.1.0) of this extension was compiled for NetLogo 6.1, 6.2 and 6.3, and will not work with earlier versions of NetLogo. If you are using v5.x of NetLogo you should download and install v2.0 of this extension.
+Include the extension in your NetLogo model using the **extensions** primitive. It should be the first line in your model. (If there are already other extensions in your model, simply add *pathdir* to the list.)
 
-Unzip the archive, rename the extracted directory to **pathdir**, and move the **pathdir** directory to the **extensions** directory inside your NetLogo application folder. The NetLogo application will normally be in the Applications folder on the Mac, or under C:\Program Files on Windows, and the **extensions** directory is in the **app** subdirectory of the NetLogo application.  Or you can place the pathdir directory in the same directory holding the NetLogo model in which you want to use this extension.
+    extensions [pathdir]
+
+If the extension has not yet been installed, NetLogo will prompt you to install it and, upon your replying in the affirmative, will download the extension and its associated files to the appropriate location.
 
 For more information on NetLogo extensions:
 [http://ccl.northwestern.edu/netlogo/docs/extensions.html](http://ccl.northwestern.edu/netlogo/docs/extensions.html)
@@ -42,7 +31,7 @@ For more information on NetLogo extensions:
 
 ## Examples
 
-See the **PathDir.nlogo** model for examples of usage.
+See the **PathDir.nlogox** model for examples of usage.
 
 
 [back to top](#netlogo-pathdir-extension)
@@ -50,10 +39,21 @@ See the **PathDir.nlogo** model for examples of usage.
 ## Primitives
 
 **pathdir:get-separator**
+**pathdir:get-file-separator**
 
 *pathdir:get-separator*
+*pathdir:get-file-separator*
 
-Returns a string with the character used by the host operating system to separate directories in the path.  E.g., for Windows the string "\\\" would be returned (as the backslash must be escaped), while for Mac OSX and linux, the string "/" would be returned.  Useful for creating operating system-independent path strings.
+Returns a string with the character used by the host operating system to separate directories in a given path.  E.g., for Windows the string "\\\" would be returned (as the backslash must be escaped), while for Mac OSX and linux, the string "/" would be returned.  Useful for creating operating system-independent paths to files.
+
+---------------------------------------
+
+**pathdir:get-path-separator**
+
+*pathdir:get-path-separator**
+
+Returns a string with the character used by the host operating system to separate paths in a list of paths, such as in Windows "PATH" environmental variable or in java.library.path. 
+E.g., for Windows the string ";" would be returned while for Mac OSX and linux, the string ":" would be returned.  Useful for creating operating system-independent lists of paths.
 
 ---------------------------------------
 
@@ -71,14 +71,15 @@ NOTE: Returns an empty string ("") if the current model has not yet been saved t
 
 *pathdir:get-model-file*
 
-Returns a string with the filename of the .nologo or .nlogo3d file containing the current model. 
+Returns a string with the filename of the .nlogox or .nlogo3dx file containing the current model. 
 
 NOTE: Returns an empty string ("") if the current model has not yet been saved to a file.
 
-Stripping the .nlogo extension  (or any extension) is easily done:
+Stripping the .nlogox extension  (or any extension) is easily done:
 
     let modelName pathdir:get-model-name
     let shortName substring modelName 0 (length modelName - position "." reverse modelName - 1)
+(Note that the code above can handle filenames with embedded periods.)
 
 The model filename can also be concatenated with the path to it:
 
@@ -89,7 +90,7 @@ The model filename can also be concatenated with the path to it:
 
 *pathdir:get-model-name*
 
-Returns a string with the name of the current model. NetLogo sets the name of the model to the filename of the .nologo or .nlogo3d file containing the model, stripped of the file extension.
+Returns a string with the name of the current model. NetLogo sets the name of the model to the filename of the .nlogox or .nlogo3dx file containing the model, stripped of the file extension.
 
 NOTE: Returns an empty string ("") if the current model has not yet been saved to a file, although NetLogo calls an unsaved model "Untitled".
 
@@ -108,6 +109,34 @@ Returns a string with the full (absolute) path to the user's home directory, as 
 *pathdir:get-CWD-path*
 
 Returns a string with the full (absolute) path to the current working directory (CWD) as specified in the NetLogo context for the current model.  The CWD may be set by the NetLogo command set-current-directory.  Note that set-current-directory will accept a path to a directory that does not actually exist and subsequently using the nonexistent CWD, say to open a file, will normally cause an error.  Note too that when a NetLogo model first opens, the CWD is set to the directory from which the model is opened.
+
+---------------------------------------
+
+**pathdir:get-extn-path**
+
+*pathdir:get-extn-path*
+
+Returns the path to the directory where NetLogo places un-bundled extensions, i.e., those installed by the Extension Manager. The location varies by platform.
+
+---------------------------------------
+
+**pathdir:get-env-var**
+
+*pathdir:get-env-var environment_variable*
+
+Returns the value of the specified environment variable in the user's environment, e.g., the value of the PATH variable. The list of standard environment variables varies by platform and the user can add new variables. Sometimes this is useful if one has a variable/value that one wants to set externally to NetLogo and then have the model "import".
+
+If *environment_variable* is an empty string, i.e., "", the primitive returns a list of strings containing all the environment variables. Each element of the list is a string with the name of an environment variable followed by a colon and a blank, and then the variables value.
+
+---------------------------------------
+
+**pathdir:get-sys-property**
+
+*pathdir:get-sys-property system_property*
+
+Returns the valuee of the specified system property in the user's environment, e.g., the name of the operating system, "os-name". The list of standard system properties varies by platform.
+
+If *system_property* is an empty string, i.e., "", the primitive returns a list of strings containing all the system properties. Each element of the list is a string with the name of a property followed by a colon and a blank, and then the property value.
 
 ---------------------------------------
 
@@ -132,17 +161,22 @@ Returns TRUE if the file or directory given by the string both exists **and** is
 ---------------------------------------
 
 **pathdir:list**
+**pathdir:list-sorted**
 
 *pathdir:list directory-string*
 
-Returns a NetLogo list of strings, each element of which contains an element of the directory listing of the specified directory.  If the path given by the string is not an absolute path, i.e., it does not begin at the root of the file system, then the path is assumed to be relative to the current working directory.  If the directory is empty, the command returns an empty list.  To get a listing of the CWD one could use 
+Returns a NetLogo list of strings, each element of which contains an element of the directory listing of the specified directory. The listing is sorted according to the operating system.  Windows is case insensitive.  Linux and IOS are not.  If the path given by the string is not an absolute path, i.e., it does not begin at the root of the file system, then the path is assumed to be relative to the current working directory.  If the directory is empty, the command returns an empty list.  To get a listing of the CWD one could use 
 
     pathdir:list pathdir:get-CWD-path 
 
 or, more simply, 
 
-    pathdir:list "".
+    pathdir:list ""
 
+*pathdir:list-sorted directory-string*
+
+Works as above, but returns a case-insensitive sorted directory list.
+	
 ---------------------------------------
 
 **pathdir:move**
@@ -150,7 +184,7 @@ or, more simply,
 *pathdir:move string1 string2*
 
 Moves or simply renames the file or directory given by string1 to string2.  If either string does not contain an absolute path, i.e., the path does not begin at the root of the file system, then the path is assumed to be relative to the current working directory.  E.g.,
-
+ 
     let sep pathdir:get-separator    
     pathdir:move (word "dir1" sep "file1.csv") (word pathdir:get-home sep "keep.csv")
 
@@ -192,17 +226,6 @@ Returns the modification date of the file given by the string. The date is retur
 
 [back to top](#netlogo-pathdir-extension)
 
-## Depreciated primitives
-
-In Version 1 of this extension, the `get-model-path`, `get-home-path` and `get-CWD-path` primitives were named `get-model`, `get-home` and `get-current`, respectively. The old names are no longer recognized. 
-
----------------------------------------
-
-[back to top](#netlogo-pathdir-extension)
-
-## Building
-
-The Makefile uses the NETLOGO environment variable to find the NetLogo installation. However, if NETLOGO has not been defined, the Makefile assumes that it is being run from the **app/extensions/pathdir** directory under the directory in which NetLogo has been installed. If compilation succeeds, `pathdir.jar` and `pathdir.jar.pack.gz` will be created.  See [Installation](#installation) for instructions on where to put the new `pathdir.jar` and `pathdir.jar.pack.gz` if they are not already there.
 
 ## Author
 
@@ -212,7 +235,7 @@ Northampton, MA 01063
 
 ## Feedback? Bugs? Feature Requests?
 
-Please visit the [github issue tracker](https://github.com/cstaelin/Pathdir-Extension/issues?state=open) to submit comments, bug reports, or feature requests.  I'm also more than willing to accept pull requests.
+Please visit the [github issue tracker](https://github.com/cstaelin/Pathdir-Extension/issues) to submit comments, bug reports, or feature requests.  I'm also more than willing to accept pull requests.
 
 ## Credits
 
@@ -222,6 +245,6 @@ Many thanks to the NetLogo developers and the NetLogo user community for answeri
 
 [![CC0](http://i.creativecommons.org/p/zero/1.0/88x31.png)](http://creativecommons.org/publicdomain/zero/1.0/)
 
-The NetLogo pathdir extension is in the public domain.  To the extent possible under law, Charles Staelin has waived all copyright and related or neighboring rights.
+The NetLogo pathdir extension is in the public domain.  To the extent possible under law, Charles Staelin has waived all copyright and related or neighboring rights. For more information please refer to the `licence.md` file accompanying this release.
 
 [back to top](#netlogo-pathdir-extension)
